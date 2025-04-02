@@ -1,12 +1,11 @@
-import { PostsList } from './components/PostsList'
+import { Blog } from './Blog.tsx'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-function App() {
+export function App() {
+  const queryClient = new QueryClient()
   return (
-    <>
-      <h1>Hello, post</h1>
-      <PostsList/>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <Blog />
+    </QueryClientProvider>
   )
 }
-
-export default App
