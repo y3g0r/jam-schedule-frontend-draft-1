@@ -1,16 +1,17 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { createPost } from '../api/posts.js'
+import { authenticatedCreatePost } from '../api/posts.js'
+import { useAuth } from "@clerk/clerk-react"
 
 export function CreatePost() {
     const [title, setTitle] = useState('')  
     const [content, setContents] = useState('')
+    const { getToken } = useAuth()
 
     const queryClient = useQueryClient()
     const createPostMutation = useMutation({
-        mutationFn: () => createPost({ title, content }),
+        mutationFn: async () => authenticatedCreatePost({ title, content }, getToken),
         onSuccess: () => queryClient.invalidateQueries(['posts']),
-
       })
 
     const handleSubmit = (e) => {

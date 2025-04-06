@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { PostList } from './components/PostList.js'
-import { Post } from './components/Post.js'
-import { CreatePost } from './components/CreatePost.js'
-import { getPosts } from './api/posts.js'
+import { PostList } from '../components/PostList.js'
+import { Post } from '../components/Post.js'
+import { CreatePost } from '../components/CreatePost.js'
+import { getPosts } from '../api/posts.js'
 
 export function Blog() {
   // const posts = [
