@@ -1,3 +1,4 @@
+import { RootLayout } from './components/RootLayout.tsx'
 import { Blog } from './pages/Blog.tsx'
 import { Home } from './pages/Home.tsx'
 import { Jams } from './pages/Jams.tsx'
@@ -8,20 +9,15 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />
+    element: <RootLayout />,
+    children: [
+      {index: true, element: <Home />},
+      {path: "schedule", element: <Schedule />},
+      {path: "jams", element: <Jams />},
+      {path: "blog", element: <Blog />},
+    ]
   },
-  {
-    path: "/schedule",
-    element: <Schedule />
-  },
-  {
-    path: "/jams",
-    element: <Jams />
-  },
-  {
-    path: "/blog",
-    element: <Blog />
-  },
+
 ])
 
 
