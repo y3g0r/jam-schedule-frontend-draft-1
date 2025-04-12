@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { PostList } from '../components/PostList.js'
-import { Post } from '../components/Post.js'
-import { CreatePost } from '../components/CreatePost.js'
-import { getPosts } from '../api/posts.js'
+import { PostList } from '../components/blog/PostList.js'
+import { Post } from '../components/blog/Post.js'
+import { CreatePost } from '../components/blog/CreatePost.js'
+import { getPosts, POSTS_QUERY_KEY } from '../api/posts.js'
 
 export function Blog() {
   // const posts = [
@@ -13,7 +13,7 @@ export function Blog() {
   // ]
 
   const postsQuery = useQuery({
-    queryKey: ['posts'],
+    queryKey: [POSTS_QUERY_KEY],
     queryFn: () => getPosts(),
   })
 

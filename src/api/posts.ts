@@ -1,3 +1,5 @@
+export const POSTS_QUERY_KEY = "posts";
+
 export const getPosts = async () => {
     const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/posts`
