@@ -10,7 +10,8 @@ export interface JamData {
 
 
 export const JAMS: JamData[] = [
-    {id: 1, name: "Let there be rock!", start: new Date("2025-05-05T18:00"), end: new Date("2025-05-05T20:00")}
+    {id: 1, name: "Prepare to live!", start: new Date("2025-04-19T14:00"), end: new Date("2025-04-19T16:00")},
+    {id: 2, name: "Let there be rock!", start: new Date("2025-05-05T18:00"), end: new Date("2025-05-05T20:00")}
 ]
 
 
@@ -23,8 +24,13 @@ export const getJams = async (): Promise<JamData[]>  => {
 }
 
 
-export const getJam = async (id: number): Promise<JamData | undefined>  => {
-    const jam = JAMS.find((value) => value.id == id)
+export const getJam = async (id: string | undefined): Promise<JamData | undefined>  => {
+    if (id === undefined) {
+        return
+    }
+    
+    const jamId = Number.parseInt(id)
+    const jam = JAMS.find((value) => value.id == jamId)
     
     console.log(`getJam(${id}) => ${JSON.stringify(jam)}`)
     if (jam === undefined) {

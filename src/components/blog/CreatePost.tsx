@@ -11,10 +11,10 @@ export function CreatePost() {
     const queryClient = useQueryClient()
     const createPostMutation = useMutation({
         mutationFn: async () => authenticatedCreatePost({ title, content }, getToken),
-        onSuccess: () => queryClient.invalidateQueries([POSTS_QUERY_KEY]),
+        onSuccess: () => queryClient.invalidateQueries({queryKey: [POSTS_QUERY_KEY]}),
       })
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault()
         createPostMutation.mutate()
     }

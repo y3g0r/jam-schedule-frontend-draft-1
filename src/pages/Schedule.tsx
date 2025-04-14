@@ -4,11 +4,11 @@ export function Schedule() {
             <h1>Schedule</h1>
             <form action="" onSubmit={(e) => e.preventDefault()}>
                 <div >
-                    <label for="name">Name: </label>
+                    <label htmlFor="name">Name: </label>
                     <input type="text" name="name" id="name" required />
                 </div>
                 <div>
-                    <label for="start-date">Date: </label>
+                    <label htmlFor="start-date">Date: </label>
                     <input
                         type="date"
                         id="start-date"
@@ -18,7 +18,7 @@ export function Schedule() {
                         max="2118-12-31" />
                 </div>
                 <div>
-                    <label for="start-time">Start: </label>
+                    <label htmlFor="start-time">Start: </label>
                     <input
                         type="time"
                         id="start-time"
@@ -28,7 +28,7 @@ export function Schedule() {
                         required />
                 </div>
                 <div>
-                    <label for="duration">Duration: </label>
+                    <label htmlFor="duration">Duration: </label>
                     <input
                         type="time"
                         id="duration"
