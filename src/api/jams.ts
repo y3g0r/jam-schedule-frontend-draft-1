@@ -6,14 +6,28 @@ export interface JamData {
     name: string;
     start: Date;
     end: Date;
+    createdBy: string
 }
 
+export interface NewJamData {
+    name: string;
+    start: Date;
+    end: Date;
+    userId: string
+}
 
 export const JAMS: JamData[] = [
-    {id: 1, name: "Prepare to live!", start: new Date("2025-04-19T14:00"), end: new Date("2025-04-19T16:00")},
-    {id: 2, name: "Let there be rock!", start: new Date("2025-05-05T18:00"), end: new Date("2025-05-05T20:00")}
+    {id: 1, name: "Prepare to live!", start: new Date("2025-04-19T14:00"), end: new Date("2025-04-19T16:00"), createdBy: "123"},
+    {id: 2, name: "Let there be rock!", start: new Date("2025-05-05T18:00"), end: new Date("2025-05-05T20:00"), createdBy: "234"}
 ]
 
+export const schedule = async (data: NewJamData): Promise<JamData> => {
+    const maxId = JAMS.reduce((previous, current) => current.id > previous ? current.id : previous, JAMS.length === 0 ? 0 : JAMS[0].id)
+    const newJam = {id: maxId + 1, name: data.name, start: data.start, end: data.end, createdBy: data.userId};
+    JAMS.push(newJam)
+
+    return Promise.resolve(newJam)
+}
 
 export const getJams = async (): Promise<JamData[]>  => {
     return Promise.resolve(JAMS);

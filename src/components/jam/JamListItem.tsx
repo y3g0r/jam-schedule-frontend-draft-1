@@ -12,6 +12,7 @@ export function JamListItem({data}: JamListItemProps) {
             <div>{data.name}</div>
             <div>Start: {data.start.toLocaleString()}</div>
             <div>End: {data.end.toLocaleString()}</div>
+            <div>Created by: {data.createdBy}</div>
             <Link to={`/jams/${data.id}`}>View</Link>
         </div>
     )

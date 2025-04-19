@@ -14,7 +14,7 @@ export function Blog() {
 
   const postsQuery = useQuery({
     queryKey: [POSTS_QUERY_KEY],
-    queryFn: () => getPosts(),
+    queryFn: getPosts,
   })
 
   const posts = postsQuery.data ?? []
@@ -27,6 +27,7 @@ export function Blog() {
       <br/>
       <Post 
         id={1}
+        author="Unknown"
         title="Literal post"
         content="Post added in front of post list"
       />
