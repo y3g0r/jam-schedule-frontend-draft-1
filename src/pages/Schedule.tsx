@@ -12,6 +12,7 @@ interface IFormInput {
     durationHours: number;
     durationMinutes: number;
     location: string;
+    organizerWillJoin: boolean;
 }
 
 interface IFormState {
@@ -20,6 +21,7 @@ interface IFormState {
     isStartTimeSet: boolean;
     totalDurationInMinutes: number;
     location: string;
+    organizerWillJoin: boolean;
 }
 
 function inititalState(): IFormState {
@@ -28,7 +30,8 @@ function inititalState(): IFormState {
         startLocalDateTime: new Date(),
         isStartTimeSet: false,
         totalDurationInMinutes: 120,
-        location: ""
+        location: "",
+        organizerWillJoin: true,
     }
 }
 
@@ -189,10 +192,20 @@ export function Schedule() {
                         Location:
 
                         <input
+                            type="text"
                             {...register("location")}
                             value={state.location}
                             onChange={(e) => setState({...state, location: e.target.value})}
-                            type="text"
+                        />
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        I will join:
+                        <input type="checkbox" 
+                            {...register("organizerWillJoin")} 
+                            checked={state.organizerWillJoin} 
+                            onChange={() => setState({...state, organizerWillJoin: !state.organizerWillJoin})}
                         />
                     </label>
                 </div>
