@@ -21,7 +21,7 @@ export const JAMS: JamData[] = [
     {id: 2, name: "Let there be rock!", start: new Date("2025-05-05T18:00"), end: new Date("2025-05-05T20:00"), createdBy: "234"}
 ]
 
-export const schedule = async (data: NewJamData): Promise<JamData> => {
+export const createJam = async (data: NewJamData): Promise<JamData> => {
     const maxId = JAMS.reduce((previous, current) => current.id > previous ? current.id : previous, JAMS.length === 0 ? 0 : JAMS[0].id)
     const newJam = {id: maxId + 1, name: data.name, start: data.start, end: data.end, createdBy: data.userId};
     JAMS.push(newJam)

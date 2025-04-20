@@ -1,85 +1,87 @@
 import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { JAM_LIST_QUERY_KEY, schedule } from "../api/jams";
+import { JAM_LIST_QUERY_KEY, createJam } from "../api/jams";
 import { useUser } from "@clerk/clerk-react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { dateToHtmlDateInputString, dateToHtmlTimeInputString, parseHtmlTimeInput } from "../utils/dateUtils";
 
 interface IFormInput {
     name: string;
-    startDate?: Date;
-    startTime?: number;
+    startDate?: Date | null;
+    startTime?: number | null;
     durationHours: number;
     durationMinutes: number;
     location: string;
-  }
+}
+
+interface IFormState {
+    name: string;
+    startLocalDateTime: Date;
+    isStartTimeSet: boolean;
+    totalDurationInMinutes: number;
+    location: string;
+}
+
+function inititalState(): IFormState {
+    return {
+        name: "",
+        startLocalDateTime: new Date(),
+        isStartTimeSet: false,
+        totalDurationInMinutes: 120,
+        location: ""
+    }
+}
 
 export function Schedule() {
-    const [name, setName] = useState("")
-    const [duration, setDuration] = useState(120);
-    const [date, setDate] = useState(new Date());
-    const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
-        .toISOString()
-        .split("T")[0];
-    console.log(date)
+    const [ state, setState ] = useState<IFormState>(inititalState());
     const { user } = useUser()
     const queryClient = useQueryClient()
     const mutation = useMutation({
-        mutationFn: schedule,
+        mutationFn: createJam,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [JAM_LIST_QUERY_KEY] })
         }
     })
     const { register, handleSubmit } = useForm<IFormInput>()
     const changeDuration = (delta: number) => {
-        if (duration + delta < 0) {
-            setDuration(0)
-            return
-        }
-        setDuration(duration + delta)
+        const duration = Math.max( state.totalDurationInMinutes + delta, 0)
+        setState({...state, totalDurationInMinutes: duration})
     }
     const onDurationHoursInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const hours = Number.parseInt(e.target.value);
-        const minutes = duration % 60;
-        setDuration(hours * 60 + minutes);
+        const minutes = state.totalDurationInMinutes % 60;
+        setState({...state, totalDurationInMinutes: hours * 60 + minutes})
     }
-
     const onDurationMinutesInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const hours = Math.floor(duration / 60);
+        const hours = Math.floor(state.totalDurationInMinutes / 60);
         const minutes = Number.parseInt(e.target.value);
-        setDuration(hours * 60 + minutes);
+        setState({...state, totalDurationInMinutes: hours * 60 + minutes})
     }
-
-    const reset = () => {
-        setName("")
-        setDuration(120)
-        setDate(new Date())
-    }
-    const newJam: SubmitHandler<IFormInput> = (formData) => {
+    const schedule: SubmitHandler<IFormInput> = (formData) => {
         if (user === undefined || user === null) {
             throw new Error("user is not available")
         }
         console.log(formData)
         mutation.mutate({
             name: formData.name,
-            start: new Date(),
-            end: new Date(),
+            start: state.startLocalDateTime,
+            end: state.startLocalDateTime,
             userId: user.id
         })
-        reset()
     }
 
     return (
         <>
             <h1>Schedule</h1>
-            <form onSubmit={handleSubmit(newJam)}>
+            <form onSubmit={handleSubmit(schedule)}>
                 <div >
                     <label>
                         Name: 
                         <input 
                             type="text" 
                             {...register("name")}
-                            value={name}
-                            onChange={e => setName(e.target.value)}
+                            value={state.name}
+                            onChange={(e) => setState({...state, name: e.target.value})}
                             placeholder="i.e. Best band regular rehearsal"
                             required 
                         />
@@ -91,8 +93,19 @@ export function Schedule() {
                         <input
                             type="date"
                             {...register("startDate")}
-                            value={dateString}
-                            onChange={e => setDate(new Date(e.target.value))}
+                            value={dateToHtmlDateInputString(state.startLocalDateTime)}
+                            onChange={(e) => {
+                                const input = e.target.value
+                                console.log(`startDate.onChange.e.target.value: ${input}`)
+                                if (input === "") return // TODO - better handling
+
+                                const inputDate = new Date(input)
+                                if (state.isStartTimeSet) {
+                                    inputDate.setHours(state.startLocalDateTime.getHours())
+                                    inputDate.setMinutes(state.startLocalDateTime.getMinutes())
+                                }
+                                setState({...state, startLocalDateTime: inputDate})
+                            }}
                             min="2018-01-01"
                             max="2118-12-31" 
                             required />
@@ -104,6 +117,27 @@ export function Schedule() {
                         <input
                             type="time"
                             {...register("startTime")}
+                            value={state.isStartTimeSet ? dateToHtmlTimeInputString(state.startLocalDateTime) : ""}
+                            onChange={(e) => {
+                                console.log(`startTime.onChange: ${e.target.value}`)
+                                if (e.target.value !== "") {
+                                    const {hours, minutes} = parseHtmlTimeInput(e.target.value)
+                                    const newStartDateTime = new Date(state.startLocalDateTime)
+                                    newStartDateTime.setHours(hours)
+                                    newStartDateTime.setMinutes(minutes)
+                                    setState({
+                                        ...state, 
+                                        startLocalDateTime: newStartDateTime,
+                                        isStartTimeSet: true
+                                    })
+                                }
+                                else {
+                                    setState({
+                                        ...state, 
+                                        isStartTimeSet: false
+                                    })
+                                }
+                            }}
                             min="09:00"
                             max="18:00"
                             required />
@@ -127,7 +161,7 @@ export function Schedule() {
                             type="number"
                             {...register("durationHours")}
                             min="0"
-                            value={Math.floor(duration / 60)}
+                            value={Math.floor(state.totalDurationInMinutes / 60)}
                             onChange={onDurationHoursInputChange}
                             required />
                         <input
@@ -135,7 +169,7 @@ export function Schedule() {
                             {...register("durationMinutes")}
                             min="0"
                             max="59"
-                            value={Math.floor(duration % 60)}
+                            value={state.totalDurationInMinutes % 60}
                             onChange={onDurationMinutesInputChange}
                             required />
                         <input 
@@ -156,6 +190,8 @@ export function Schedule() {
 
                         <input
                             {...register("location")}
+                            value={state.location}
+                            onChange={(e) => setState({...state, location: e.target.value})}
                             type="text"
                         />
                     </label>
