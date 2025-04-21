@@ -13,6 +13,11 @@ interface IFormInput {
     durationMinutes: number;
     location: string;
     organizerWillJoin: boolean;
+    participant: string;
+}
+
+interface IParticipant {
+    id: string;
 }
 
 interface IFormState {
@@ -22,6 +27,8 @@ interface IFormState {
     totalDurationInMinutes: number;
     location: string;
     organizerWillJoin: boolean;
+    participants: IParticipant[];
+    addParticipantInput: string;
 }
 
 function inititalState(): IFormState {
@@ -32,6 +39,8 @@ function inititalState(): IFormState {
         totalDurationInMinutes: 120,
         location: "",
         organizerWillJoin: true,
+        participants: [],
+        addParticipantInput: "",
     }
 }
 
@@ -208,6 +217,35 @@ export function Schedule() {
                             onChange={() => setState({...state, organizerWillJoin: !state.organizerWillJoin})}
                         />
                     </label>
+                </div>
+                <div>
+                    <div>Participants:</div>
+                    <ul>
+                        {state.participants.map((participant, i) => (
+                            <li key={i}>
+                                <input type="text" value={participant.id} onChange={(e) => {
+                                    const {participants: items} = state;
+                                    setState({...state, participants: [...items.slice(0, i), {id: e.target.value}, ...items.slice(i+1, items.length)]})
+                                }}/>
+                                <button type="button" value={participant.id} onClick={() => setState({...state, participants: state.participants.filter((_, index) => i !== index)})}>Delete</button>
+                            </li>
+                        ))}
+                    </ul>
+                    <input type="email" 
+                        {...register("participant")}
+                        value={state.addParticipantInput}
+                        placeholder="email address"
+                        onChange={(e) => setState({...state, addParticipantInput: e.target.value})}
+                    />
+                    <button type="button" disabled={state.addParticipantInput.length === 0} onClick={() => {
+                        if (state.addParticipantInput.length === 0) return
+                            setState({
+                                ...state, 
+                                participants: [...state.participants, {id: state.addParticipantInput}], 
+                                addParticipantInput: ""
+                            })
+                        }}>Add</button>
+                    <button type="button" disabled={state.addParticipantInput.length === 0} onClick={() => setState({...state, addParticipantInput: ""})}>Clear</button>
                 </div>
                 <div>
                     <input type="submit" value="Schedule!"/>
