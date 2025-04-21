@@ -22,6 +22,7 @@ export const JAMS: JamData[] = [
 ]
 
 export const createJam = async (data: NewJamData): Promise<JamData> => {
+    console.log(`createJam called`)
     const maxId = JAMS.reduce((previous, current) => current.id > previous ? current.id : previous, JAMS.length === 0 ? 0 : JAMS[0].id)
     const newJam = {id: maxId + 1, name: data.name, start: data.start, end: data.end, createdBy: data.userId};
     JAMS.push(newJam)
@@ -30,6 +31,7 @@ export const createJam = async (data: NewJamData): Promise<JamData> => {
 }
 
 export const getJams = async (): Promise<JamData[]>  => {
+    console.log(`getJams called, jams length: ${JAMS.length}`)
     return Promise.resolve(JAMS);
     const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/posts`

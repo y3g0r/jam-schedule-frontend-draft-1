@@ -52,6 +52,9 @@ export function Schedule() {
         mutationFn: createJam,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [JAM_LIST_QUERY_KEY] })
+            // queryClient.refetchQueries({ queryKey: [JAM_LIST_QUERY_KEY] }); // Force refetch
+
+            console.log("Schedule.mutation.onSuccess finished")
         }
     })
     const { register, handleSubmit } = useForm<IFormInput>()

@@ -1,7 +1,7 @@
 import { JamData } from "../../api/jams"
 import { JamListItem } from "./JamListItem"
 
-export interface JamListProps {
+interface JamListProps {
     jams: JamData[]
 }
 
