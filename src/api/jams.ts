@@ -55,6 +55,7 @@ export const getJams = async (
             }
         }
     )
+    
     if (!res.ok) {
         throw new Error(`Error fetching jams ${res.status} ${res.statusText}`)
     }

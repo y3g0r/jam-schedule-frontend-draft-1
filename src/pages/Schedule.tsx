@@ -87,7 +87,7 @@ export function Schedule() {
 
     return (
         <>
-            <h1>Schedule</h1>
+            <h2>Schedule</h2>
             <form onSubmit={handleSubmit(schedule)}>
                 <div >
                     <label>
