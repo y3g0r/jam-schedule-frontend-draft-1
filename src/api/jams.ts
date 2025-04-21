@@ -7,31 +7,37 @@ export interface BackendJamData {
     name: string;
     startTimestampSeconds: number;
     endTimestampSeconds: number;
+    location: string;
+    participants: Participant[]
 }
 
+interface Participant {
+    email: string;
+}
 export interface JamData {
     id: number;
     name: string;
     start: Date;
     end: Date;
-    createdBy: string
+    createdBy: string;
+    location: string;
+    participants: Participant[]
 }
 
 export interface NewJamData {
     name: string;
     start: Date;
     end: Date;
-    userId: string
+    location: string;
+    participants: Participant[]
 }
 
 export const JAMS: JamData[] = [
-    {id: 1, name: "Prepare to live!", start: new Date("2025-04-19T14:00"), end: new Date("2025-04-19T16:00"), createdBy: "123"},
-    {id: 2, name: "Let there be rock!", start: new Date("2025-05-05T18:00"), end: new Date("2025-05-05T20:00"), createdBy: "234"}
+    {id: 1, name: "Prepare to live!", start: new Date("2025-04-19T14:00"), end: new Date("2025-04-19T16:00"), createdBy: "123", location: "", participants: []},
+    {id: 2, name: "Let there be rock!", start: new Date("2025-05-05T18:00"), end: new Date("2025-05-05T20:00"), createdBy: "234", location: "", participants: []}
 ]
 
-// interface Participant {
-//     email: string;
-// }
+
 // interface CreateJamRequest {
 //     name: string;
 //     startTimestampSeconds: number;
@@ -63,10 +69,10 @@ export const createJam = async (data: NewJamData, getToken: GetTokenFunction): P
             name: data.name,
             startTimestampSeconds: Math.floor(data.start.getTime() / 1000),
             endTimestampSeconds: Math.floor(data.end.getTime() / 1000),
-            location: "dummy location",
-            participants: [
-                {email: "example+dummy-participant@example.com"}
-            ]
+            location: data.location,
+            participants: data.participants.map((participant) => ({
+                email: participant.email
+            }))
         })
     })
 
@@ -104,7 +110,9 @@ export const getJams = async (
         name: backendJamData.name,
         start: new Date(backendJamData.startTimestampSeconds * 1000),
         end: new Date(backendJamData.endTimestampSeconds * 1000),
-        createdBy: backendJamData.createdBy
+        createdBy: backendJamData.createdBy,
+        location: backendJamData.location,
+        participants: backendJamData.participants
     }))
     console.log(`getJams backend results: ${backendResult}`)
     return JAMS

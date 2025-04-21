@@ -80,11 +80,17 @@ export function Schedule() {
             throw new Error("user is not available")
         }
         console.log(formData)
+        const participants = state.participants.map((p) => ({email: p.id}))
+        if (state.organizerWillJoin) {
+            participants.push({email: user.emailAddresses[0].toString()})
+        }
         mutation.mutate({
             name: formData.name,
+            // TODO: local to UTC
             start: state.startLocalDateTime,
             end: state.startLocalDateTime,
-            userId: user.id
+            location: state.location,
+            participants: participants
         })
     }
 
