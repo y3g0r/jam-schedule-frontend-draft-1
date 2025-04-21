@@ -24,7 +24,6 @@ export function JamList() {
     }
 
     const jams = data ?? []
-    console.log(jams)
     return (
         <>
         <h2>Your jams</h2>

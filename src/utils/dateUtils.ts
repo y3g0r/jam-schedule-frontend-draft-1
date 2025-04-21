@@ -2,7 +2,6 @@ export function dateToHtmlDateInputString(date: Date | null): string {
     if (date === null) return "";
 
     const result = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split("T")[0]
-    console.log(`dateToHtmlDateInputString: ${result}`)
     return result
 }
 

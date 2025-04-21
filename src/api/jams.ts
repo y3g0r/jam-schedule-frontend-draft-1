@@ -29,13 +29,52 @@ export const JAMS: JamData[] = [
     {id: 2, name: "Let there be rock!", start: new Date("2025-05-05T18:00"), end: new Date("2025-05-05T20:00"), createdBy: "234"}
 ]
 
-export const createJam = async (data: NewJamData): Promise<JamData> => {
-    console.log(`createJam called`)
-    const maxId = JAMS.reduce((previous, current) => current.id > previous ? current.id : previous, JAMS.length === 0 ? 0 : JAMS[0].id)
-    const newJam = {id: maxId + 1, name: data.name, start: data.start, end: data.end, createdBy: data.userId};
-    JAMS.push(newJam)
+// interface Participant {
+//     email: string;
+// }
+// interface CreateJamRequest {
+//     name: string;
+//     startTimestampSeconds: number;
+//     endTimestampSeconds: number;
+//     location: string
+//     participants: Participant[];
+// }
 
-    return Promise.resolve(newJam)
+interface CreateJamResponse {
+    id: number;
+}
+
+export const createJam = async (data: NewJamData, getToken: GetTokenFunction): Promise<CreateJamResponse> => {
+    // console.log(`createJam called`)
+    // const maxId = JAMS.reduce((previous, current) => current.id > previous ? current.id : previous, JAMS.length === 0 ? 0 : JAMS[0].id)
+    // const newJam = {id: maxId + 1, name: data.name, start: data.start, end: data.end, createdBy: data.userId};
+    // JAMS.push(newJam)
+
+    // return Promise.resolve(newJam)
+    const token = await getToken()
+
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/jams`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            name: data.name,
+            startTimestampSeconds: Math.floor(data.start.getTime() / 1000),
+            endTimestampSeconds: Math.floor(data.end.getTime() / 1000),
+            location: "dummy location",
+            participants: [
+                {email: "example+dummy-participant@example.com"}
+            ]
+        })
+    })
+
+    if (!res.ok) {
+        throw new Error(`Error creating jam ${res.status} ${res.statusText}`);
+    }
+    
+    return await res.json();
 }
 type GetTokenFunction = () => Promise<string | null>;
 

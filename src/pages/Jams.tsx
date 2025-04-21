@@ -3,7 +3,6 @@ import { Schedule } from "./Schedule";
 import { SignedIn, SignedOut, SignInButton} from "@clerk/clerk-react";
 
 export function Jams() {
-    console.log(`Jams component re-rendering...`)
     return (
         <>
             <h1>Jams</h1>

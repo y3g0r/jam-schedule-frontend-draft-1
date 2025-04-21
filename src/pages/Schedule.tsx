@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { JAM_LIST_QUERY_KEY, createJam } from "../api/jams";
-import { useUser } from "@clerk/clerk-react";
+import { JAM_LIST_QUERY_KEY, NewJamData, createJam } from "../api/jams";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { dateToHtmlDateInputString, dateToHtmlTimeInputString, parseHtmlTimeInput } from "../utils/dateUtils";
 
@@ -32,9 +32,11 @@ interface IFormState {
 }
 
 function inititalState(): IFormState {
+    const newDate = new Date();
+    newDate.setSeconds(0);
     return {
         name: "",
-        startLocalDateTime: new Date(),
+        startLocalDateTime: newDate,
         isStartTimeSet: false,
         totalDurationInMinutes: 120,
         location: "",
@@ -47,9 +49,10 @@ function inititalState(): IFormState {
 export function Schedule() {
     const [ state, setState ] = useState<IFormState>(inititalState());
     const { user } = useUser()
+    const { getToken } = useAuth()
     const queryClient = useQueryClient()
     const mutation = useMutation({
-        mutationFn: createJam,
+        mutationFn: (data: NewJamData) => createJam(data, getToken),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [JAM_LIST_QUERY_KEY] })
             // queryClient.refetchQueries({ queryKey: [JAM_LIST_QUERY_KEY] }); // Force refetch
