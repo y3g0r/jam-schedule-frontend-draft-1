@@ -1,6 +1,14 @@
 export const JAM_QUERY_KEY = 'jam';
 export const JAM_LIST_QUERY_KEY = 'jamList';
 
+export interface BackendJamData {
+    id: number;
+    createdBy: string;
+    name: string;
+    startTimestampSeconds: number;
+    endTimestampSeconds: number;
+}
+
 export interface JamData {
     id: number;
     name: string;
@@ -29,14 +37,37 @@ export const createJam = async (data: NewJamData): Promise<JamData> => {
 
     return Promise.resolve(newJam)
 }
+type GetTokenFunction = () => Promise<string | null>;
 
-export const getJams = async (): Promise<JamData[]>  => {
-    console.log(`getJams called, jams length: ${JAMS.length}`)
-    return Promise.resolve(JAMS);
+
+export const getJams = async (
+    getToken: GetTokenFunction
+): Promise<JamData[]>  => {
+    // console.log(`getJams called, jams length: ${JAMS.length}`)
+    // return Promise.resolve(JAMS);
+    const token = await getToken();
+
     const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/posts`
+        `${import.meta.env.VITE_BACKEND_URL}/jams`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
     )
-  return await res.json()
+    if (!res.ok) {
+        throw new Error(`Error fetching jams ${res.status} ${res.statusText}`)
+    }
+    const backendResult = await res.json()
+    return backendResult.map((backendJamData: BackendJamData) => ({
+        id: backendJamData.id,
+        name: backendJamData.name,
+        start: new Date(backendJamData.startTimestampSeconds * 1000),
+        end: new Date(backendJamData.endTimestampSeconds * 1000),
+        createdBy: backendJamData.createdBy
+    }))
+    console.log(`getJams backend results: ${backendResult}`)
+    return JAMS
 }
 
 
