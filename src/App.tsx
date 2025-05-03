@@ -12,7 +12,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
-      {index: true, element: <Home />},
+      {index: true, element: <Jams />},
       {path: "schedule", element: <Schedule />},
       {path: "jams", element: <Jams />},
       {path: "jams/:jamId", element: <JamDetails />},

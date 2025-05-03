@@ -24,6 +24,15 @@ export function JamList() {
     }
 
     const jams = data ?? []
+
+    if (jams.length === 0 ) {
+        return (
+            <>
+            <h2>Your jams</h2>
+            <p>You don't have any jams yet.</p>
+            </>
+        )
+    }
     return (
         <>
         <h2>Your jams</h2>

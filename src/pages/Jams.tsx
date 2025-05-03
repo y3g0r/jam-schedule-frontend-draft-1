@@ -2,6 +2,7 @@ import { JamList } from "../components/jam/JamList";
 import { Schedule } from "./Schedule";
 import { SignedIn, SignedOut, SignInButton} from "@clerk/clerk-react";
 
+// TODO: add fallback content when there is no internet connection
 export function Jams() {
     return (
         <>

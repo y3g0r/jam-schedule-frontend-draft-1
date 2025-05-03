@@ -6,7 +6,7 @@ export function RootLayout() {
     return (
         <>
             <UserHeader />
-            <NavBar />
+            {/* <NavBar /> */}
             <Outlet />
         </>
     )
