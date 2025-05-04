@@ -14,7 +14,7 @@ export function JamListItem({data}: JamListItemProps) {
             <div>End: {data.end.toLocaleString()}</div>
             <div>Created by: {data.createdBy}</div>
             <div>Location: {data.location}</div>
-            <div>Participants: {JSON.stringify(data.participants)}</div>
+            {data.participants.length > 0 && <div>Participants: <ol>{data.participants.map((p) => <li>{p.email}</li>)}</ol></div>}
             <Link to={`/jams/${data.id}`}>View</Link>
         </div>
     )
