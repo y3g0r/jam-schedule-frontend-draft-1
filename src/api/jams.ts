@@ -13,6 +13,7 @@ export interface BackendJamData {
 
 interface Participant {
     email: string;
+    response?: "accepted" | "declined";
 }
 export interface JamData {
     id: number;
